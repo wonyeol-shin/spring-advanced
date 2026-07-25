@@ -25,10 +25,9 @@ public class UserService {
 
     @Transactional
     public void changePassword(long userId, UserChangePasswordRequest userChangePasswordRequest) {
-        if (userChangePasswordRequest.getNewPassword().length() < 8 ||
-                !userChangePasswordRequest.getNewPassword().matches(".*\\d.*") ||
-                !userChangePasswordRequest.getNewPassword().matches(".*[A-Z].*")) {
-            throw new InvalidRequestException("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.");
+        // 요청을 할 때 기존 패스워드와 새로운 패스워드가 동일하면  차단
+        if (userChangePasswordRequest.getOldPassword().equals(userChangePasswordRequest.getNewPassword()) ) {
+            throw new InvalidRequestException("입력한 기존 비밀번호와 새 비밀번호가 동일합니다.");
         }
 
         User user = userRepository.findById(userId)
